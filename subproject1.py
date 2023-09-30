@@ -16,21 +16,26 @@ def main():
     F: List[Tuple] = []
 
     # Go through each text in the corpus and create (term, docID) pairs, and add them to the existing list
-    for text in ALL_TEXTS:
+    for i, text in enumerate(ALL_TEXTS):
         # Find the docID for this document
         DOC_ID = int(text.attrs['newid'])
 
         # Create list of tokens
         tokens = tokenize(text)
 
-        print(tokens)
-
         # Create (term, docID) pairs from those tokens, and add to existing list
-        break
+        F.extend(create_pairs(tokens, DOC_ID))
+
+        if i == 1:
+            break
+
+    F = sorted(F)
+
+    print(F)
 
 
-def create_pairs(document: Tag) -> list:
-    pairs: List[Tuple[str, int]] = []
+def create_pairs(tokens: List[str], docID: int) -> list:
+    pairs: List[Tuple[str, int]] = [(token, docID) for token in tokens]
 
     return pairs
 
@@ -45,11 +50,19 @@ def tokenize(document: Tag) -> list:
     # Clean the text, so that I can tokenize more properly
     cleaned_text = clean(this_text)
 
+    # Tokenize the text
     tokenized: List[str] = word_tokenize(cleaned_text)
 
+    # Lower-case the text, keeping acronyms capitalized
     lower_cased: List[str] = [token.lower() if not token.isupper() else token for token in tokenized]
 
-    return lower_cased
+    # Remove duplicates
+    no_dupes = set(lower_cased)
+
+    # Sort alphabetically
+    sort = sorted(no_dupes)
+
+    return sort
 
 
 def get_texts() -> List[Tag]:
@@ -63,6 +76,7 @@ def get_texts() -> List[Tag]:
 
     # Loop though each file in the corpus
     for file in CORPUS_FILES:
+
         # Read the files contents as HTML
         with open(file, 'r') as f:
             contents = BeautifulSoup(f, features='html.parser')
@@ -97,7 +111,7 @@ def clean(text: str) -> str:
     text = sub(r"(?<!\w)([A-Za-z])\.", r'\1', text)
 
     # Remove all punctuation
-    text = sub(r"[()<>!/.,:;?\"]+", ' ', text)
+    text = sub(r"[()<>!/+.,:;?\"]+", ' ', text)
 
     # Remove all instances of multiple periods in a row
     text = sub(r"\.{2,}", ' ', text)
