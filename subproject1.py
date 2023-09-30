@@ -11,6 +11,10 @@ from nltk import word_tokenize
 
 
 def main():
+    """
+    Main function. Runs the whole subproject1 module
+    """
+
     # Get all reuters objects in the corpus
     ALL_TEXTS: List[Tag] = get_texts()
 
@@ -18,12 +22,14 @@ def main():
     F: List[Tuple] = []
 
     # Go through each text in the corpus and create (term, docID) pairs, and add them to the existing list
-    for i, text in enumerate(ALL_TEXTS):
+    for text in ALL_TEXTS:
         # Find the docID for this document
         DOC_ID = int(text.attrs['newid'])
 
+        print(f"Creating (term, docID) pairs for article: {DOC_ID}")
+
         # Create list of tokens
-        tokens = tokenize(text)
+        tokens = process_document(text)
 
         # Create (term, docID) pairs from those tokens, and add to existing list
         F.extend(create_pairs(tokens, DOC_ID))
@@ -32,20 +38,39 @@ def main():
     F = sorted(F)
 
     # Create an index for the list of (term, docID) pairs
+    print("Creating inverted index")
     index = create_index(F)
 
     # Save results to file
+    print("Saving to file: output/naive_indexer.txt")
     save_to_file(index)
 
 
 def save_to_file(index: dict) -> None:
-    with open("output/naiive_indexer.txt", "wt") as f:
+    """
+    Save the computed index to an output file.
+
+    Always saves to `output/naive_indexer.txt`.
+
+    :param index: The index to save to file
+    """
+
+    with open("output/naive_indexer.txt", "wt") as f:
         json.dump(index, f)
 
 
 def create_index(pairs: List[Tuple[str, int]]) -> Dict[str, list]:
+    """
+    Create an inverted index based on the list of (term, docID) tuples.
+
+    :param pairs: The list of (term, docID) tuples
+    :return: A dictionary of form `{term: [list, of, docIDs]}`
+    """
+
+    # Create a defaultdict to allow for saving to dictionary keys that don't yet exist
     index = defaultdict(list)
 
+    # For each (term, docID) pair, get the term and docID and add them to the index
     for tup in pairs:
         this_term = tup[0]
         this_doc_id = tup[1]
@@ -56,12 +81,27 @@ def create_index(pairs: List[Tuple[str, int]]) -> Dict[str, list]:
 
 
 def create_pairs(tokens: List[str], docID: int) -> list:
+    """
+    Create (term, docID) pairs based on the given list of tokens
+
+    :param tokens: The list of tokens to create (term, docID) pairs with
+    :param docID: The docID representing this article
+    :return: A list of (term, docID) pairs
+    """
+
     pairs: List[Tuple[str, int]] = [(token, docID) for token in tokens]
 
     return pairs
 
 
-def tokenize(document: Tag) -> list:
+def process_document(document: Tag) -> list:
+    """
+    Perform various textual processing steps on a given document to get ready for future steps.
+
+    :param document: The Reuters document, as represented by a Tag object
+    :return: A list of cleaned, tokenized, lower-cased, sorted tokens with no duplicates
+    """
+
     # Text is given as an individual document. Get the only document text in the list of 'text' tags in the document
     doc_text = document('text')[0]
 
@@ -87,6 +127,12 @@ def tokenize(document: Tag) -> list:
 
 
 def get_texts() -> List[Tag]:
+    """
+    Read the Reuters corpus to get all the articles
+
+    :return: A list of Reuters articles, represented by Tag objects
+    """
+
     # Get a list of all corpus files to read
     CORPUS_FILES: List[Path] = [Path(p) for p in glob("../reuters21578/*.sgm")]
     print("\nFound files:\n", [f"{f}" for f in CORPUS_FILES])
@@ -96,6 +142,7 @@ def get_texts() -> List[Tag]:
 
     # Loop though each file in the corpus
     for file in CORPUS_FILES:
+        print(f"Reading file: {file}")
 
         # Read the files contents as HTML
         with open(file, 'r') as f:
@@ -112,6 +159,16 @@ def get_texts() -> List[Tag]:
 
 
 def clean(text: str) -> str:
+    """
+    Perform various cleanings on a given articles string.
+
+    Apply several regex rules to try to clean the incoming text as much as possible, so that it may be tokenized,
+    and eventually indexed, in a nicer way.
+
+    :param text: The text to sanitize
+    :return: The sanitized text
+    """
+
     # Make sure all newline characters have a space after to prevent future tokenization errors, as found in experiment
     text = text.replace('\n', '\n ')
 
