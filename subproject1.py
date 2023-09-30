@@ -1,7 +1,9 @@
 from glob import glob
 from pathlib import Path
 from re import sub
-from typing import List, Tuple
+from typing import List, Tuple, Dict
+from collections import defaultdict
+import json
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -26,12 +28,31 @@ def main():
         # Create (term, docID) pairs from those tokens, and add to existing list
         F.extend(create_pairs(tokens, DOC_ID))
 
-        if i == 1:
-            break
-
+    # Sort the list of tuples by term
     F = sorted(F)
 
-    print(F)
+    # Create an index for the list of (term, docID) pairs
+    index = create_index(F)
+
+    # Save results to file
+    save_to_file(index)
+
+
+def save_to_file(index: dict) -> None:
+    with open("output/naiive_indexer.txt", "wt") as f:
+        json.dump(index, f)
+
+
+def create_index(pairs: List[Tuple[str, int]]) -> Dict[str, list]:
+    index = defaultdict(list)
+
+    for tup in pairs:
+        this_term = tup[0]
+        this_doc_id = tup[1]
+
+        index[this_term] += [this_doc_id]
+
+    return dict(index)
 
 
 def create_pairs(tokens: List[str], docID: int) -> list:
@@ -67,9 +88,8 @@ def tokenize(document: Tag) -> list:
 
 def get_texts() -> List[Tag]:
     # Get a list of all corpus files to read
-    CORPUS_FILES: List[Path] = [Path('../reuters21578/reut2-000.sgm')]
-    # CORPUS_FILES: List[Path] = [Path(p) for p in glob("../reuters21578/*.sgm")]
-    # print("\nFound files:\n", [f"{f}" for f in CORPUS_FILES])
+    CORPUS_FILES: List[Path] = [Path(p) for p in glob("../reuters21578/*.sgm")]
+    print("\nFound files:\n", [f"{f}" for f in CORPUS_FILES])
 
     # Create a list, to be populated later, of actual articles in this corpus
     all_articles: List[Tag] = []
@@ -102,7 +122,7 @@ def clean(text: str) -> str:
     text = sub(r'(?![A-Za-z])-(?![A-Za-z])', ' ', text)
 
     # Remove certain unicode control characters, as found in experiment
-    text = sub(r'\x03|\x02', '', text)
+    text = sub(r'\x03|\x02|\x07|\x05|\xfc|\u007F', '', text)
 
     # Remove all numbers
     text = sub(r'\d', '', text)
@@ -110,8 +130,8 @@ def clean(text: str) -> str:
     # Simplify acronyms to their constituent letters. i.e. changes "U.S." to "US"
     text = sub(r"(?<!\w)([A-Za-z])\.", r'\1', text)
 
-    # Remove all punctuation
-    text = sub(r"[()<>!/+.,:;?\"]+", ' ', text)
+    # Remove all punctuation and special characters
+    text = sub(r"[()<>{}!$=@&*-/+.,:;?\"]+", ' ', text)
 
     # Remove all instances of multiple periods in a row
     text = sub(r"\.{2,}", ' ', text)
