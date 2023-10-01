@@ -114,8 +114,8 @@ def process_document(document: Tag) -> list:
     # Tokenize the text
     tokenized: List[str] = word_tokenize(cleaned_text)
 
-    # Lower-case the text, keeping acronyms capitalized
-    lower_cased: List[str] = [token.lower() if not token.isupper() else token for token in tokenized]
+    # Lower-case the text
+    lower_cased: List[str] = [token.lower() for token in tokenized]
 
     # Remove duplicates
     no_dupes = set(lower_cased)
@@ -188,10 +188,13 @@ def clean(text: str) -> str:
     text = sub(r"(?<!\w)([A-Za-z])\.", r'\1', text)
 
     # Remove all punctuation and special characters
-    text = sub(r"[()<>{}!$=@&*-/+.,:;?\"]+", ' ', text)
+    text = sub(r"[()<>{}\[\]!$=@&*-/+.,:;?\"]+", ' ', text)
 
     # Remove all instances of multiple periods in a row
     text = sub(r"\.{2,}", ' ', text)
+
+    # Remove "^M" found in experiment
+    text = sub(r'\^M', ' ', text)
 
     # Remove all apostrophes surrounded by letters. In other words, replace all "it's" with "its", etc.
     text = sub(r"(?<=[A-Za-z])'(?=[A-Za-z])", '', text)
