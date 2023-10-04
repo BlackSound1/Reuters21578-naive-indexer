@@ -62,7 +62,7 @@ def save_to_file(index: dict) -> None:
     :param index: The index to save to file
     """
 
-    with open("output/naive_index.txt", "wt") as f:
+    with open("output/1. naive_index.txt", "wt") as f:
         json.dump(index, f)
 
 
@@ -192,6 +192,9 @@ def clean(text: str) -> str:
     # Remove all apostrophes remaining. Needed to do this separately, because we needed to replace contraction
     # apostrophes with the blank string. We will replace all other apostrophes with a space
     text = sub(r"'", ' ', text)
+
+    # Make sure there are spaces around numbers
+    text = sub(r'(?<=[^0-9\s])(?=[0-9])|(?<=[0-9])(?=[^0-9\s])', ' ', text)
 
     return text
 

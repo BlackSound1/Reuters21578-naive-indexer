@@ -1,0 +1,115 @@
+import json
+from collections import defaultdict
+
+from nltk.corpus import stopwords
+
+
+def main():
+    # Read the naive index into memory
+    with open('output/1. naive_index.txt', 'rt') as f:
+        index = json.load(f)
+
+    print(f"Initial length: {len(index)}")
+
+    # Remove numbers
+    index = remove_numbers(index)
+
+    print(f"Length after removing numbers: {len(index)}")
+
+    # Do case folding
+    index = case_folding(index)
+
+    print(f"Length after case folding: {len(index)}")
+
+
+def remove_numbers(index: dict) -> dict:
+    new_index = {key: val for key, val in index.items() if not key.isnumeric()}
+
+    print("Saving to file: output/2. no_numbers_index.txt")
+
+    with open("output/2. no_numbers_index.txt", "wt") as f:
+        json.dump(new_index, f)
+
+    return new_index
+
+
+def case_folding(index: dict) -> dict:
+    index_keys = index.keys()
+
+    new_index = defaultdict(list)
+
+    # Create a tuple of keys that are similar, where similar means of the same word type regardless of capitalization
+    similar_keys = set()
+
+    # For each of the keys in the index, associate members of the same word type and put them in the similar_keys set
+    print("Making a set of tuples. Each tuple contains all versions of a word type, considering capitalization."
+          "\nThis will take a while...")
+    for key in index_keys:
+        similar = tuple(k for k in index_keys if k.lower() == key.lower())
+        similar_keys.add(similar)
+
+    # Navigate through each of the word tuples
+    for word_tuple in similar_keys:
+        # Get the lower-case version of the word type
+        normalized = word_tuple[0].lower()
+
+        # Create a set of postings to add. It will contain 1 copy of all postings from each of the instances of this
+        # word type
+        new_postings = set()
+
+        # Go through each of the keys associated with this word type
+        for word in word_tuple:
+            # Add, to the set of new postings, the postings list from the old index for this word
+            new_postings.update(index[word])
+
+        # Create a new key for the new index based on the lower-cased version of the word type.
+        # This key should be associated with the sorted version of the list of new postings
+        new_index[normalized] = sorted(list(new_postings))
+
+    # Sort index by keys
+    new_index = dict(sorted(new_index.items()))
+
+    print("Saving to file: output/3. case_folded_index.txt")
+
+    with open("output/3. case_folded_index.txt", "wt") as f:
+        json.dump(new_index, f)
+
+    return new_index
+
+
+def stopwords30(index: dict) -> dict:
+    # Get first 30 stopwords from NLTK stopwords
+    STOPWORDS = list(stopwords.words('english'))[:30]
+
+    # Create new index based on whether the keys of the old index are stopwords
+    new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
+
+    print("Saving to file: output/4a. 30_stopwords_index.txt")
+
+    with open("output/4a. 30_stopwords_index.txt", "wt") as f:
+        json.dump(new_index, f)
+
+    return new_index
+
+
+def stopwords150(index: dict) -> dict:
+    # Get first 150 stopwords from NLTK stopwords
+    STOPWORDS = list(stopwords.words('english'))[:150]
+
+    # Create new index based on whether the keys of the old index are stopwords
+    new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
+
+    print("Saving to file: output/4b. 150_stopwords_index.txt")
+
+    with open("output/4b. 150_stopwords_index.txt", "wt") as f:
+        json.dump(new_index, f)
+
+    return new_index
+
+
+def stem(index: dict) -> dict:
+    pass
+
+
+if __name__ == '__main__':
+    main()
