@@ -4,6 +4,7 @@ from re import sub
 from typing import List, Tuple, Dict
 from collections import defaultdict
 import json
+import time
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -14,6 +15,8 @@ def main():
     """
     Main function. Runs the whole subproject1 module
     """
+
+    tick = time.time()
 
     # Get all reuters objects in the corpus
     ALL_TEXTS: List[Tag] = get_texts()
@@ -42,8 +45,12 @@ def main():
     index = create_index(F)
 
     # Save results to file
-    print("Saving to file: output/naive_indexer.txt")
+    print("Saving to file: output/naive_index.txt")
     save_to_file(index)
+
+    tock = time.time()
+
+    print(f"Time taken: {tock - tick}")
 
 
 def save_to_file(index: dict) -> None:
@@ -55,7 +62,7 @@ def save_to_file(index: dict) -> None:
     :param index: The index to save to file
     """
 
-    with open("output/naive_indexer.txt", "wt") as f:
+    with open("output/naive_index.txt", "wt") as f:
         json.dump(index, f)
 
 
@@ -114,16 +121,10 @@ def process_document(document: Tag) -> list:
     # Tokenize the text
     tokenized: List[str] = word_tokenize(cleaned_text)
 
-    # Lower-case the text
-    lower_cased: List[str] = [token.lower() for token in tokenized]
-
     # Remove duplicates
-    no_dupes = set(lower_cased)
+    no_dupes = set(tokenized)
 
-    # Sort alphabetically
-    sort = sorted(no_dupes)
-
-    return sort
+    return list(no_dupes)
 
 
 def get_texts() -> List[Tag]:
@@ -160,38 +161,27 @@ def get_texts() -> List[Tag]:
 
 def clean(text: str) -> str:
     """
-    Perform various cleanings on a given articles string.
+    Perform mild cleaning of the incoming text to make tokenization easier and more accurate.
 
-    Apply several regex rules to try to clean the incoming text as much as possible, so that it may be tokenized,
-    and eventually indexed, in a nicer way.
+    Based on experiment, need to remove Unicode control characters, make sure new lines have a space after,
+    simplify acronyms to their constituent letters, remove all punctuation and special characters, remove all
+    apostrophes (handle contractions carefully), and remove a srange ^M character.
 
-    :param text: The text to sanitize
-    :return: The sanitized text
+    :param text: The text to clean
+    :return: The cleaned text
     """
 
     # Make sure all newline characters have a space after to prevent future tokenization errors, as found in experiment
     text = text.replace('\n', '\n ')
 
-    # Remove all instances of multiple - in a row
-    text = sub(r'-{2,}', ' ', text)
-
-    # Remove - characters without letters surrounding them. i.e. Keeps "once-in-a-lifetime", but not " - "
-    text = sub(r'(?![A-Za-z])-(?![A-Za-z])', ' ', text)
-
     # Remove certain unicode control characters, as found in experiment
     text = sub(r'\x03|\x02|\x07|\x05|\xfc|\u007F', '', text)
-
-    # Remove all numbers
-    text = sub(r'\d', '', text)
 
     # Simplify acronyms to their constituent letters. i.e. changes "U.S." to "US"
     text = sub(r"(?<!\w)([A-Za-z])\.", r'\1', text)
 
     # Remove all punctuation and special characters
     text = sub(r"[()<>{}\[\]!$=@&*-/+.,:;?\"]+", ' ', text)
-
-    # Remove all instances of multiple periods in a row
-    text = sub(r"\.{2,}", ' ', text)
 
     # Remove "^M" found in experiment
     text = sub(r'\^M', ' ', text)
