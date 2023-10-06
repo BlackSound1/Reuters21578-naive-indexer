@@ -28,12 +28,13 @@ def main():
     index150 = stopwords150(index)
     print(f"Length after removing 150 stopwords (from the case-folded index): {len(index150)}")
 
-    # # Stem
-    # index = stem(index150)
-    # print(f"Length after stemming (the index after removing 150 stopwords): {len(index)}")
+    # Stem
+    index = stem(index150)
+    print(f"Length after stemming (the index after removing 150 stopwords): {len(index)}")
 
 
 def remove_numbers(index: dict) -> dict:
+    # Create a new index based on the given index, keeping only non-numeric keys
     new_index = {key: val for key, val in index.items() if not key.isnumeric()}
 
     print("Saving to file: output/2. no_numbers_index.txt")
@@ -53,14 +54,16 @@ def case_folding(index: dict) -> dict:
 
     # Go through each of the given indexes keys
     for key in index_keys:
+        lowered = key.lower()
+
         # Either populate or create a key based on the lower-cased version of this key.
         # The key should be associated with the postings list of that key in the original index.
         # If a postings list already exists, just append to it.
         # If it doesn't exist, the defaultdicts list for that key will be [], so can still append to it
-        new_index[key.lower()] += index[key]
+        new_index[lowered] += index[key]
 
         # Sort the postings list for this key, and remove duplicates
-        new_index[key.lower()] = sorted(set(new_index[key.lower()]))
+        new_index[lowered] = sorted(set(new_index[lowered]))
 
     # Sort index by keys
     new_index = dict(sorted(new_index.items()))
@@ -104,40 +107,27 @@ def stopwords150(index: dict) -> dict:
 
 
 def stem(index: dict) -> dict:
-    index_keys = index.keys()
+    # Get all the keys of the given index
+    index_keys = list(index.keys())
+
+    # Create a new index to return
+    new_index = defaultdict(list)
 
     # Create them Porter stemmer
     stemmer = PorterStemmer()
 
-    new_index = defaultdict(list)
-
-    # Create a tuple of keys that are similar, where similar means of the same word type, considering stemming
-    similar_keys = set()
-
-    # For each of the keys in the index, associate members of the same word type and put them in the similar_keys set
-    print("Making a set of tuples. Each tuple contains all versions of a word type, considering stemming."
-          " This will take a while...")
+    # Go through each of the given indexes keys
     for key in index_keys:
-        similar = tuple(k for k in index_keys if stemmer.stem(k) == stemmer.stem(key))
-        similar_keys.add(similar)
+        stemmed = stemmer.stem(key)
 
-    # Navigate through each of the word tuples
-    for word_tuple in similar_keys:
-        # Get the stemmed version of the word type
-        normalized = stemmer.stem(word_tuple[0])
+        # Either populate or create a key based on the stemmed version of this key.
+        # The key should be associated with the postings list of that key in the original index.
+        # If a postings list already exists, just append to it.
+        # If it doesn't exist, the defaultdicts list for that key will be [], so can still append to it
+        new_index[stemmed] += index[key]
 
-        # Create a set of postings to add. It will contain 1 copy of all postings from each of the instances of this
-        # word type
-        new_postings = set()
-
-        # Go through each of the keys associated with this word type
-        for word in word_tuple:
-            # Add, to the set of new postings, the postings list from the old index for this word
-            new_postings.update(index[word])
-
-        # Create a new key for the new index based on the stemmed version of the word type.
-        # This key should be associated with the sorted version of the list of new postings
-        new_index[normalized] = sorted(list(new_postings))
+        # Sort the postings list for this key, and remove duplicates
+        new_index[stemmed] = sorted(set(new_index[stemmed]))
 
     # Sort index by keys
     new_index = dict(sorted(new_index.items()))
