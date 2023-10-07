@@ -4,40 +4,89 @@ from collections import defaultdict
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
+from utilities import (calc_postings_size, calc_dict_size, calc_percent_change, render_table)
+
 
 def main():
     # Read the naive index into memory
     with open('output/1. naive_index.txt', 'rt') as f:
         index = json.load(f)
 
-    print(f"Initial length: {len(index)}")
+    # Calculate initial sizes
+    INITIAL_DICT_SIZE = calc_dict_size(index)
+    INITIAL_POSTINGS_SIZE = calc_postings_size(index)
 
     # Remove numbers
     index = remove_numbers(index)
-    print(f"Length after removing numbers: {len(index)}")
+
+    # Calculate size data after removing numbers
+    NO_NUMS_DICT_SIZE = calc_dict_size(index)
+    NO_NUMS_POSTINGS_SIZE = calc_postings_size(index)
+    PCT_CHANGE_DICT_SIZE_NO_NUMS = calc_percent_change(NO_NUMS_DICT_SIZE, INITIAL_DICT_SIZE)
+    PCT_CHANGE_POSTINGS_SIZE_NO_NUMS = calc_percent_change(NO_NUMS_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Do case folding
     index = case_folding(index)
-    print(f"Length after case folding: {len(index)}")
+
+    # Calculate size data after case-folding
+    CASE_FOLDING_DICT_SIZE = calc_dict_size(index)
+    CASE_FOLDING_POSTINGS_SIZE = calc_postings_size(index)
+    PCT_CHANGE_DICT_SIZE_CASE_FOLDING = calc_percent_change(CASE_FOLDING_DICT_SIZE, NO_NUMS_DICT_SIZE)
+    CML_CHANGE_DICT_SIZE_CASE_FOLDING = calc_percent_change(CASE_FOLDING_DICT_SIZE, INITIAL_DICT_SIZE)
+    PCT_CHANGE_POSTINGS_SIZE_CASE_FOLDING = calc_percent_change(CASE_FOLDING_POSTINGS_SIZE, NO_NUMS_POSTINGS_SIZE)
+    CML_CHANGE_POSTINGS_SIZE_CASE_FOLDING = calc_percent_change(CASE_FOLDING_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Remove 30 stopwords
     index30 = stopwords30(index)
-    print(f"Length after removing 30 stopwords (from the case-folded index): {len(index30)}")
+
+    # Calculate size data after removing 30 stopwords
+    STOPW30_DICT_SIZE = calc_dict_size(index30)
+    STOPW30_POSTINGS_SIZE = calc_postings_size(index30)
+    PCT_CHANGE_DICT_SIZE_30_STOPW = calc_percent_change(STOPW30_DICT_SIZE, CASE_FOLDING_DICT_SIZE)
+    CML_CHANGE_DICT_SIZE_30_STOPW = calc_percent_change(STOPW30_DICT_SIZE, INITIAL_DICT_SIZE)
+    PCT_CHANGE_POSTINGS_SIZE_30_STOPW = calc_percent_change(STOPW30_POSTINGS_SIZE, CASE_FOLDING_POSTINGS_SIZE)
+    CML_CHANGE_POSTINGS_SIZE_30_STOPW = calc_percent_change(STOPW30_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Remove 150 stopwords
     index150 = stopwords150(index)
-    print(f"Length after removing 150 stopwords (from the case-folded index): {len(index150)}")
+
+    # Calculate size data after removing 150 stopwords
+    STOPW150_DICT_SIZE = calc_dict_size(index150)
+    STOPW150_POSTINGS_SIZE = calc_postings_size(index150)
+    PCT_CHANGE_DICT_SIZE_150_STOPW = calc_percent_change(STOPW150_DICT_SIZE, CASE_FOLDING_DICT_SIZE)
+    CML_CHANGE_DICT_SIZE_150_STOPW = calc_percent_change(STOPW150_DICT_SIZE, INITIAL_DICT_SIZE)
+    PCT_CHANGE_POSTINGS_SIZE_150_STOPW = calc_percent_change(STOPW150_POSTINGS_SIZE, CASE_FOLDING_POSTINGS_SIZE)
+    CML_CHANGE_POSTINGS_SIZE_150_STOPW = calc_percent_change(STOPW150_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Stem
     index = stem(index150)
-    print(f"Length after stemming (the index after removing 150 stopwords): {len(index)}")
+
+    # Calculate size data after stemming
+    STEM_DICT_SIZE = calc_dict_size(index)
+    STEM_POSTINGS_SIZE = calc_postings_size(index)
+    PCT_CHANGE_DICT_SIZE_STEM = calc_percent_change(STEM_DICT_SIZE, STOPW150_DICT_SIZE)
+    CML_CHANGE_DICT_SIZE_STEM = calc_percent_change(STEM_DICT_SIZE, INITIAL_DICT_SIZE)
+    PCT_CHANGE_POSTINGS_SIZE_STEM = calc_percent_change(STEM_POSTINGS_SIZE, STOPW150_POSTINGS_SIZE)
+    CML_CHANGE_POSTINGS_SIZE_STEM = calc_percent_change(STEM_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
+
+    # Render the table to the console, featuring all the computed data
+    render_table(CASE_FOLDING_DICT_SIZE, CASE_FOLDING_POSTINGS_SIZE, CML_CHANGE_DICT_SIZE_150_STOPW,
+                 CML_CHANGE_DICT_SIZE_30_STOPW, CML_CHANGE_DICT_SIZE_CASE_FOLDING, CML_CHANGE_DICT_SIZE_STEM,
+                 CML_CHANGE_POSTINGS_SIZE_150_STOPW, CML_CHANGE_POSTINGS_SIZE_30_STOPW,
+                 CML_CHANGE_POSTINGS_SIZE_CASE_FOLDING, CML_CHANGE_POSTINGS_SIZE_STEM, INITIAL_DICT_SIZE,
+                 INITIAL_POSTINGS_SIZE, NO_NUMS_DICT_SIZE, NO_NUMS_POSTINGS_SIZE, PCT_CHANGE_DICT_SIZE_150_STOPW,
+                 PCT_CHANGE_DICT_SIZE_30_STOPW, PCT_CHANGE_DICT_SIZE_CASE_FOLDING, PCT_CHANGE_DICT_SIZE_NO_NUMS,
+                 PCT_CHANGE_DICT_SIZE_STEM, PCT_CHANGE_POSTINGS_SIZE_150_STOPW, PCT_CHANGE_POSTINGS_SIZE_30_STOPW,
+                 PCT_CHANGE_POSTINGS_SIZE_CASE_FOLDING, PCT_CHANGE_POSTINGS_SIZE_NO_NUMS, PCT_CHANGE_POSTINGS_SIZE_STEM,
+                 STEM_DICT_SIZE, STEM_POSTINGS_SIZE, STOPW150_DICT_SIZE, STOPW150_POSTINGS_SIZE, STOPW30_DICT_SIZE,
+                 STOPW30_POSTINGS_SIZE)
 
 
 def remove_numbers(index: dict) -> dict:
     # Create a new index based on the given index, keeping only non-numeric keys
     new_index = {key: val for key, val in index.items() if not key.isnumeric()}
 
-    print("Saving to file: output/2. no_numbers_index.txt")
+    print("\nSaving to file: output/2. no_numbers_index.txt")
 
     with open("output/2. no_numbers_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -68,7 +117,7 @@ def case_folding(index: dict) -> dict:
     # Sort index by keys
     new_index = dict(sorted(new_index.items()))
 
-    print("Saving to file: output/3. case_folded_index.txt")
+    print("\nSaving to file: output/3. case_folded_index.txt")
 
     with open("output/3. case_folded_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -83,7 +132,7 @@ def stopwords30(index: dict) -> dict:
     # Create new index based on whether the keys of the old index are stopwords
     new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
 
-    print("Saving to file: output/4a. 30_stopwords_index.txt")
+    print("\nSaving to file: output/4a. 30_stopwords_index.txt")
 
     with open("output/4a. 30_stopwords_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -98,7 +147,7 @@ def stopwords150(index: dict) -> dict:
     # Create new index based on whether the keys of the old index are stopwords
     new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
 
-    print("Saving to file: output/4b. 150_stopwords_index.txt")
+    print("\nSaving to file: output/4b. 150_stopwords_index.txt")
 
     with open("output/4b. 150_stopwords_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -132,7 +181,7 @@ def stem(index: dict) -> dict:
     # Sort index by keys
     new_index = dict(sorted(new_index.items()))
 
-    print("Saving to file: output/5. stemmed_index.txt")
+    print("\nSaving to file: output/5. stemmed_index.txt")
 
     with open("output/5. stemmed_index.txt", "wt") as f:
         json.dump(new_index, f)
