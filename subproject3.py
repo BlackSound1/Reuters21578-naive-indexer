@@ -8,6 +8,11 @@ from utilities import (calc_postings_size, calc_dict_size, calc_percent_change, 
 
 
 def main():
+    """
+    Read the index generated from `subproject1.py`, and perform various lossy compressions to it, saving
+    to additional output files and recording size data along the way. Display a table at the end.
+    """
+
     # Read the naive index into memory
     with open('output/1. naive_index.txt', 'rt') as f:
         index = json.load(f)
@@ -83,6 +88,16 @@ def main():
 
 
 def remove_numbers(index: dict) -> dict:
+    """
+    Remove all numeric keys in the given index.
+
+    Create a new index, keeping only the items from the given index that are non-numeric, discarding postings lists
+    as necessary
+
+    :param index: The index to remove items with numeric keys from
+    :return: A new index, based on the given index, without numeric keys
+    """
+
     # Create a new index based on the given index, keeping only non-numeric keys
     new_index = {key: val for key, val in index.items() if not key.isnumeric()}
 
@@ -95,6 +110,22 @@ def remove_numbers(index: dict) -> dict:
 
 
 def case_folding(index: dict) -> dict:
+    """
+    Handle case-folding the keys of the given index.
+
+    If 2 or more original keys case-fold to the same new key, must append their postings lists together,
+    keeping only unique postings, and sorting the resulting list.
+
+    The result should, itself, be sorted by key, alphabetically.
+
+    Creates a new index based on the given index to avoid errors.
+
+    :param index: The index to case-fold keys for
+    :return: A new index, based on the given index, that has case-folded versions of the given indexes keys.
+             Should be smaller than the given index. Should not lose any postings. Should have unique
+             and sorted postings for each key.
+    """
+
     # Get all the keys of the given index
     index_keys = list(index.keys())
 
@@ -126,6 +157,17 @@ def case_folding(index: dict) -> dict:
 
 
 def stopwords30(index: dict) -> dict:
+    """
+    Create a new index, based on the given index, with 30 stopword keys removed.
+
+    Eliminates the keys corresponding to stopwords completely, not preserving their postings lists.
+
+    Creates a new index based on the given index to avoid errors.
+
+    :param index: The index to remove 30 stopword keys for
+    :return: A new index, based on the given index, with all keys corresponding to 30 stopwords removed.
+    """
+
     # Get first 30 stopwords from NLTK stopwords
     STOPWORDS = list(stopwords.words('english'))[:30]
 
@@ -141,6 +183,17 @@ def stopwords30(index: dict) -> dict:
 
 
 def stopwords150(index: dict) -> dict:
+    """
+    Create a new index, based on the given index, with 150 stopword keys removed.
+
+    Eliminates the keys corresponding to stopwords completely, not preserving their postings lists.
+
+    Creates a new index based on the given index to avoid errors.
+
+    :param index: The index to remove 150 stopword keys for
+    :return: A new index, based on the given index, with all keys corresponding to 150 stopwords removed.
+    """
+
     # Get first 150 stopwords from NLTK stopwords
     STOPWORDS = list(stopwords.words('english'))[:150]
 
@@ -156,6 +209,22 @@ def stopwords150(index: dict) -> dict:
 
 
 def stem(index: dict) -> dict:
+    """
+    Handle stemming the keys of the given index.
+
+    If 2 or more original keys stem to the same new key, must append their postings lists together,
+    keeping only unique postings, and sorting the resulting list.
+
+    The result should, itself, be sorted by key, alphabetically.
+
+    Creates a new index based on the given index to avoid errors.
+
+    :param index: The index to stem keys for
+    :return: A new index, based on the given index, that has stemmed versions of the given indexes keys.
+             Should be smaller than the given index. Should not lose any postings. Should have unique
+             and sorted postings for each key.
+    """
+
     # Get all the keys of the given index
     index_keys = list(index.keys())
 
