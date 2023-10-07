@@ -1,7 +1,6 @@
 import json
 from collections import defaultdict
 
-from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 from utilities import (calc_postings_size, calc_dict_size, calc_percent_change, render_table)
