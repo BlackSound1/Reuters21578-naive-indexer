@@ -41,6 +41,9 @@ def main():
     PCT_CHANGE_POSTINGS_SIZE_CASE_FOLDING = calc_percent_change(CASE_FOLDING_POSTINGS_SIZE, NO_NUMS_POSTINGS_SIZE)
     CML_CHANGE_POSTINGS_SIZE_CASE_FOLDING = calc_percent_change(CASE_FOLDING_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
+    # Find most common stopwords, after case-folding and number removal
+    create_stopwords(index)
+
     # Remove 30 stopwords
     index30 = stopwords30(index)
 
@@ -168,8 +171,9 @@ def stopwords30(index: dict) -> dict:
     :return: A new index, based on the given index, with all keys corresponding to 30 stopwords removed.
     """
 
-    # Get first 30 stopwords from NLTK stopwords
-    STOPWORDS = list(stopwords.words('english'))[:30]
+    # Get the first 30 stopwords from stopwords.txt. The file has the 150 most common words in the corpus
+    with open('stopwords.txt', 'rt') as f:
+        STOPWORDS = [word.strip() for word in f.readlines()][:30]
 
     # Create new index based on whether the keys of the old index are stopwords
     new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
@@ -194,8 +198,9 @@ def stopwords150(index: dict) -> dict:
     :return: A new index, based on the given index, with all keys corresponding to 150 stopwords removed.
     """
 
-    # Get first 150 stopwords from NLTK stopwords
-    STOPWORDS = list(stopwords.words('english'))[:150]
+    # Get all stopwords from stopwords.txt. The file has the 150 most common words in the corpus
+    with open('stopwords.txt', 'rt') as f:
+        STOPWORDS = [word.strip() for word in f.readlines()]
 
     # Create new index based on whether the keys of the old index are stopwords
     new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
@@ -256,6 +261,19 @@ def stem(index: dict) -> dict:
         json.dump(new_index, f)
 
     return new_index
+
+
+def create_stopwords(index: dict) -> None:
+    # Sort by most common dictionary terms. Inspired by https://stackoverflow.com/a/50863131
+    sorted_index = dict(sorted(index.items(), key=lambda x: len(x[1]), reverse=True))
+
+    # Get only the 150 most common tokens
+    most_common_tokens_150 = list(sorted_index.keys())[:150]
+
+    # Save them to a file
+    print("\nSaving to file: stopwords.txt")
+    with open('stopwords.txt', 'wt') as f:
+        f.write('\n'.join(token for token in most_common_tokens_150))
 
 
 if __name__ == '__main__':
