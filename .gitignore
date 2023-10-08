@@ -3,9 +3,10 @@
 .ipynb_checkpoints/
 
 output/
+query_results/
 
 P22023.pdf
-
 testing.ipynb
-
 stopwords.txt
+Report.*
+Demo.*

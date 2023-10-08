@@ -1,15 +1,18 @@
 import json
 from collections import defaultdict
+from pathlib import Path
 
 from nltk.stem import PorterStemmer
 
+from subproject2 import query_processor
 from utilities import (calc_postings_size, calc_dict_size, calc_percent_change, render_table)
 
 
 def main():
     """
     Read the index generated from `subproject1.py`, and perform various lossy compressions to it, saving
-    to additional output files and recording size data along the way. Display a table at the end.
+    to additional output files and recording size data along the way. Display a table at the end. Finally,
+    run the query processor on the selected three queries again to see what has changed.
     """
 
     # Read the naive index into memory
@@ -87,6 +90,10 @@ def main():
                  PCT_CHANGE_POSTINGS_SIZE_CASE_FOLDING, PCT_CHANGE_POSTINGS_SIZE_NO_NUMS, PCT_CHANGE_POSTINGS_SIZE_STEM,
                  STEM_DICT_SIZE, STEM_POSTINGS_SIZE, STOPW150_DICT_SIZE, STOPW150_POSTINGS_SIZE, STOPW30_DICT_SIZE,
                  STOPW30_POSTINGS_SIZE)
+
+    # Run the subproject2 query processor on the compressed naive index
+    print("\n-----------------\n\nNow running query processor")
+    query_processor(Path('output/5. stemmed_index.txt'), mode=3)
 
 
 def remove_numbers(index: dict) -> dict:

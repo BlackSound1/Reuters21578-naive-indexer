@@ -10,10 +10,12 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from nltk import word_tokenize
 
+from subproject2 import query_processor
+
 
 def main():
     """
-    Main function. Runs the whole subproject1 module
+    Main function. Runs the whole subproject1 module. Finally, run the query processor on the selected three queries.
     """
 
     tick = time.time()
@@ -51,6 +53,10 @@ def main():
     tock = time.time()
 
     print(f"Time taken: {tock - tick}")
+
+    # Run the subproject2 query processor on the uncompressed naive index
+    print("\n-----------------\n\nNow running query processor")
+    query_processor(Path('output/1. naive_index.txt'), mode=1)
 
 
 def save_to_file(index: dict) -> None:

@@ -137,32 +137,46 @@ def render_table(CASE_FOLDING_DICT_SIZE, CASE_FOLDING_POSTINGS_SIZE, CML_CHANGE_
     word_types_table = create_word_types_table()
 
     # Fill table with data
-    word_types_table.add_row(f"{INITIAL_DICT_SIZE:,}", str(0), str(0))
-    word_types_table.add_row(f"{NO_NUMS_DICT_SIZE:,}", str(PCT_CHANGE_DICT_SIZE_NO_NUMS),
+    word_types_table.add_row(f"{INITIAL_DICT_SIZE:,}",
+                             str(0),
+                             str(0))
+    word_types_table.add_row(f"{NO_NUMS_DICT_SIZE:,}",
+                             str(PCT_CHANGE_DICT_SIZE_NO_NUMS),
                              str(PCT_CHANGE_DICT_SIZE_NO_NUMS))
-    word_types_table.add_row(f"{CASE_FOLDING_DICT_SIZE:,}", str(PCT_CHANGE_DICT_SIZE_CASE_FOLDING),
+    word_types_table.add_row(f"{CASE_FOLDING_DICT_SIZE:,}",
+                             str(PCT_CHANGE_DICT_SIZE_CASE_FOLDING),
                              str(CML_CHANGE_DICT_SIZE_CASE_FOLDING))
-    word_types_table.add_row(f"{STOPW30_DICT_SIZE:,}", str(PCT_CHANGE_DICT_SIZE_30_STOPW),
+    word_types_table.add_row(f"{STOPW30_DICT_SIZE:,}",
+                             str(PCT_CHANGE_DICT_SIZE_30_STOPW),
                              str(CML_CHANGE_DICT_SIZE_30_STOPW))
-    word_types_table.add_row(f"{STOPW150_DICT_SIZE:,}", str(PCT_CHANGE_DICT_SIZE_150_STOPW),
+    word_types_table.add_row(f"{STOPW150_DICT_SIZE:,}",
+                             str(PCT_CHANGE_DICT_SIZE_150_STOPW),
                              str(CML_CHANGE_DICT_SIZE_150_STOPW))
-    word_types_table.add_row(f"{STEM_DICT_SIZE:,}", str(PCT_CHANGE_DICT_SIZE_STEM),
+    word_types_table.add_row(f"{STEM_DICT_SIZE:,}",
+                             str(PCT_CHANGE_DICT_SIZE_STEM),
                              str(CML_CHANGE_DICT_SIZE_STEM))
 
     # Create postings sub-table
     postings_table = create_postings_table()
 
     # Fill table with data
-    postings_table.add_row(f"{INITIAL_POSTINGS_SIZE:,}", str(0), str(0))
-    postings_table.add_row(f"{NO_NUMS_POSTINGS_SIZE:,}", str(PCT_CHANGE_POSTINGS_SIZE_NO_NUMS),
+    postings_table.add_row(f"{INITIAL_POSTINGS_SIZE:,}",
+                           str(0),
+                           str(0))
+    postings_table.add_row(f"{NO_NUMS_POSTINGS_SIZE:,}",
+                           str(PCT_CHANGE_POSTINGS_SIZE_NO_NUMS),
                            str(PCT_CHANGE_POSTINGS_SIZE_NO_NUMS))
-    postings_table.add_row(f"{CASE_FOLDING_POSTINGS_SIZE:,}", str(PCT_CHANGE_POSTINGS_SIZE_CASE_FOLDING),
+    postings_table.add_row(f"{CASE_FOLDING_POSTINGS_SIZE:,}",
+                           str(PCT_CHANGE_POSTINGS_SIZE_CASE_FOLDING),
                            str(CML_CHANGE_POSTINGS_SIZE_CASE_FOLDING))
-    postings_table.add_row(f"{STOPW30_POSTINGS_SIZE:,}", str(PCT_CHANGE_POSTINGS_SIZE_30_STOPW),
+    postings_table.add_row(f"{STOPW30_POSTINGS_SIZE:,}",
+                           str(PCT_CHANGE_POSTINGS_SIZE_30_STOPW),
                            str(CML_CHANGE_POSTINGS_SIZE_30_STOPW))
-    postings_table.add_row(f"{STOPW150_POSTINGS_SIZE:,}", str(PCT_CHANGE_POSTINGS_SIZE_150_STOPW),
+    postings_table.add_row(f"{STOPW150_POSTINGS_SIZE:,}",
+                           str(PCT_CHANGE_POSTINGS_SIZE_150_STOPW),
                            str(CML_CHANGE_POSTINGS_SIZE_150_STOPW))
-    postings_table.add_row(f"{STEM_POSTINGS_SIZE:,}", str(PCT_CHANGE_POSTINGS_SIZE_STEM),
+    postings_table.add_row(f"{STEM_POSTINGS_SIZE:,}",
+                           str(PCT_CHANGE_POSTINGS_SIZE_STEM),
                            str(CML_CHANGE_POSTINGS_SIZE_STEM))
 
     # Handle first column text
