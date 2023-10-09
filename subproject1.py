@@ -52,7 +52,7 @@ def main():
 
     tock = time.time()
 
-    print(f"Time taken: {tock - tick}")
+    print(f"Time taken: {(tock - tick):0.2f} seconds")
 
     # Run the subproject2 query processor on the uncompressed naive index
     print("\n-----------------\n\nNow running query processor")
