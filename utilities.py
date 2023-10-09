@@ -20,10 +20,10 @@ def calc_percent_change(new: float, old: float) -> float:
 
 def calc_dict_size(index: dict) -> int:
     """
-    Get how many keys exist in an index
+    Get the size of the dictionary of an index
 
-    :param index: The index to find the number of keys in
-    :return: The number of keys in the given index
+    :param index: The index to find the dictionary size of
+    :return: The size of the dictionary of the index
     """
 
     return len(index.keys())
