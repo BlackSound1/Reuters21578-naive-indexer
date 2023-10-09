@@ -1,6 +1,4 @@
-pandas
 pytest
-numpy
 nltk
 beautifulsoup4
 rich
