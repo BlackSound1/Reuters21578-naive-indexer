@@ -270,6 +270,18 @@ def stem(index: dict) -> dict:
 
 
 def create_stopwords(index: dict) -> None:
+    """
+    Create a list of the 150 most common terms in the index.
+
+    This needs to be done here, so that the terms are as normalized as possible before we need the stopwords
+    for their removal. It would be bad if 'the' and 'The' were different stopwords, for instance, so it's best to
+    do this after case-folding. Needs to happen before stemming though, as per the table I'm trying to emulate.
+
+    Finds the most common terms by seeing which terms have the longest postings list.
+
+    :param index: The index to find the most common terms of
+    """
+
     # Sort by most common dictionary terms. Inspired by https://stackoverflow.com/a/50863131
     sorted_index = dict(sorted(index.items(), key=lambda x: len(x[1]), reverse=True))
 
