@@ -56,7 +56,7 @@ def main():
 
     # Run the subproject2 query processor on the uncompressed naive index
     print("\n-----------------\n\nNow running query processor")
-    query_processor(Path('output/1. naive_index.txt'), mode=1)
+    query_processor(Path('output/1. naive_index.txt'), subproject=1)
 
 
 def save_to_file(index: dict) -> None:

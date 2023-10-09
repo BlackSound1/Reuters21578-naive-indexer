@@ -93,7 +93,7 @@ def main():
 
     # Run the subproject2 query processor on the compressed naive index
     print("\n-----------------\n\nNow running query processor")
-    query_processor(Path('output/5. stemmed_index.txt'), mode=3)
+    query_processor(Path('output/5. stemmed_index.txt'), subproject=3)
 
 
 def remove_numbers(index: dict) -> dict:
