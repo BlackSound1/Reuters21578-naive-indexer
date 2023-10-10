@@ -26,12 +26,12 @@ def subproject_1():
     # Create a list of (term, docID) pairs
     F: List[Tuple] = []
 
+    print(f"\nCreating (term, docID) pairs for all articles. This will take about 30 seconds...")
+
     # Go through each text in the corpus and create (term, docID) pairs, and add them to the existing list
     for text in ALL_TEXTS:
         # Find the docID for this document
         DOC_ID = int(text.attrs['newid'])
-
-        print(f"Creating (term, docID) pairs for article: {DOC_ID}")
 
         # Create list of tokens
         tokens = process_document(text)
@@ -43,16 +43,16 @@ def subproject_1():
     F = sorted(F)
 
     # Create an index for the list of (term, docID) pairs
-    print("Creating inverted index")
+    print("\nCreating inverted index")
     index = create_index(F)
 
     # Save results to file
-    print("Saving to file: output/naive_index.txt")
+    print("\nSaving to file: output/1. naive_index.txt")
     save_to_file(index)
 
     tock = time.time()
 
-    print(f"Time taken: {(tock - tick):0.2f} seconds")
+    print(f"\nTime taken: {(tock - tick):0.2f} seconds")
 
     # Run the subproject2 query processor on the uncompressed naive index
     print("\n-----------------\n\nRUNNING SUBPROJECT 2 (From Subproject 1)")
@@ -144,14 +144,15 @@ def get_texts() -> List[Tag]:
 
     # Get a list of all corpus files to read
     CORPUS_FILES: List[Path] = [Path(p) for p in glob("../reuters21578/*.sgm")]
-    print("\nFound files:\n", [f"{f}" for f in CORPUS_FILES])
+    dirname = CORPUS_FILES[0].parent
+    print(f"\nIn directory: {dirname}, found files:\n\n{[f.name for f in CORPUS_FILES]}\n")
 
     # Create a list, to be populated later, of actual articles in this corpus
     all_articles: List[Tag] = []
 
     # Loop though each file in the corpus
     for file in CORPUS_FILES:
-        print(f"Reading file: {file}")
+        print(f"Reading file: {file.name}")
 
         # Read the files contents as HTML
         with open(file, 'r') as f:

@@ -24,6 +24,7 @@ def subproject_3():
     INITIAL_POSTINGS_SIZE = calc_postings_size(index)
 
     # Remove numbers
+    print("\nRemoving numbers from the index")
     index = remove_numbers(index)
 
     # Calculate size data after removing numbers
@@ -33,6 +34,7 @@ def subproject_3():
     PCT_CHANGE_POSTINGS_SIZE_NO_NUMS = calc_percent_change(NO_NUMS_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Do case folding
+    print("\nCase-folding the index")
     index = case_folding(index)
 
     # Calculate size data after case-folding
@@ -44,9 +46,11 @@ def subproject_3():
     CML_CHANGE_POSTINGS_SIZE_CASE_FOLDING = calc_percent_change(CASE_FOLDING_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Find most common stopwords, after case-folding and number removal
+    print("\nCreating stopwords list based on the 150 most common terms in the index")
     create_stopwords(index)
 
     # Remove 30 stopwords
+    print("\nRemoving the most common 30 stopwords from the index")
     index30 = stopwords30(index)
 
     # Calculate size data after removing 30 stopwords
@@ -58,6 +62,7 @@ def subproject_3():
     CML_CHANGE_POSTINGS_SIZE_30_STOPW = calc_percent_change(STOPW30_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Remove 150 stopwords
+    print("\nRemoving the most common 150 stopwords from the index")
     index150 = stopwords150(index)
 
     # Calculate size data after removing 150 stopwords
@@ -69,6 +74,7 @@ def subproject_3():
     CML_CHANGE_POSTINGS_SIZE_150_STOPW = calc_percent_change(STOPW150_POSTINGS_SIZE, INITIAL_POSTINGS_SIZE)
 
     # Stem
+    print("\nStemming the index")
     index = stem(index150)
 
     # Calculate size data after stemming
@@ -110,7 +116,7 @@ def remove_numbers(index: dict) -> dict:
     # Create a new index based on the given index, keeping only non-numeric keys
     new_index = {key: val for key, val in index.items() if not key.isnumeric()}
 
-    print("\nSaving to file: output/2. no_numbers_index.txt")
+    print("Saving to file: output/2. no_numbers_index.txt")
 
     with open("output/2. no_numbers_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -157,7 +163,7 @@ def case_folding(index: dict) -> dict:
     # Sort index by keys
     new_index = dict(sorted(new_index.items()))
 
-    print("\nSaving to file: output/3. case_folded_index.txt")
+    print("Saving to file: output/3. case_folded_index.txt")
 
     with open("output/3. case_folded_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -184,7 +190,7 @@ def stopwords30(index: dict) -> dict:
     # Create new index based on whether the keys of the old index are stopwords
     new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
 
-    print("\nSaving to file: output/4a. 30_stopwords_index.txt")
+    print("Saving to file: output/4a. 30_stopwords_index.txt")
 
     with open("output/4a. 30_stopwords_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -211,7 +217,7 @@ def stopwords150(index: dict) -> dict:
     # Create new index based on whether the keys of the old index are stopwords
     new_index = {key: val for key, val in index.items() if key not in STOPWORDS}
 
-    print("\nSaving to file: output/4b. 150_stopwords_index.txt")
+    print("Saving to file: output/4b. 150_stopwords_index.txt")
 
     with open("output/4b. 150_stopwords_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -261,7 +267,7 @@ def stem(index: dict) -> dict:
     # Sort index by keys
     new_index = dict(sorted(new_index.items()))
 
-    print("\nSaving to file: output/5. stemmed_index.txt")
+    print("Saving to file: output/5. stemmed_index.txt")
 
     with open("output/5. stemmed_index.txt", "wt") as f:
         json.dump(new_index, f)
@@ -289,6 +295,6 @@ def create_stopwords(index: dict) -> None:
     most_common_tokens_150 = list(sorted_index.keys())[:150]
 
     # Save them to a file
-    print("\nSaving to file: stopwords.txt")
+    print("Saving to file: stopwords.txt")
     with open('stopwords.txt', 'wt') as f:
         f.write('\n'.join(token for token in most_common_tokens_150))

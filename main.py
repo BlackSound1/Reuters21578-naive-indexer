@@ -7,5 +7,5 @@ if __name__ == '__main__':
 
     print("\nRUNNING SUBPROJECT 1...")
     subproject1.subproject_1()
-    print("\nRUNNING SUBPROJECT 3...")
+    print("\n-----------------\n\nRUNNING SUBPROJECT 3...")
     subproject3.subproject_3()
