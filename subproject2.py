@@ -135,8 +135,8 @@ def sample_query_processor(index: Path, subproject: int = 1) -> None:
     elif subproject == 3:
         file_name = "compressed_index.txt"
 
-    TEST_DIR = "query_results/test_queries"
-    SEARCH_DIR = "query_results/search_queries"
+    TEST_DIR = "query_results/sample_queries/test_queries"
+    SEARCH_DIR = "query_results/sample_queries/search_queries"
 
     # Make sure necessary paths exist
     Path(TEST_DIR).mkdir(parents=True, exist_ok=True)
@@ -144,10 +144,10 @@ def sample_query_processor(index: Path, subproject: int = 1) -> None:
 
     # Save to test_queries directory
     print(f'\nSaving test query results to file: {TEST_DIR}/{file_name}')
-    with open(f"query_results/test_queries/{file_name}", 'wt') as f:
+    with open(f"{TEST_DIR}/{file_name}", 'wt') as f:
         json.dump(RESULT_DICT_TEST, f, indent=4)
 
     # Save to search_queries directory
     print(f'\nSaving search query results to file: {SEARCH_DIR}/{file_name}')
-    with open(f"query_results/search_queries/{file_name}", 'wt') as f:
+    with open(f"{SEARCH_DIR}/{file_name}", 'wt') as f:
         json.dump(RESULT_DICT_SEARCH, f, indent=4)
