@@ -53,7 +53,7 @@ def _read_file(file: Path) -> dict:
         sys.exit(f"\nThe required file ({str(file)}), does not exist.")
 
 
-def query_processor(index: Path, subproject: int = 1) -> None:
+def subproject_2(index: Path, subproject: int = 1) -> None:
     """
     Validate three sample queries.
 

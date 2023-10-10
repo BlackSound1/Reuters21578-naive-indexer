@@ -10,10 +10,10 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from nltk import word_tokenize
 
-from subproject2 import query_processor
+from subproject2 import subproject_2
 
 
-def main():
+def subproject_1():
     """
     Main function. Runs the whole subproject1 module. Finally, run the query processor on the selected three queries.
     """
@@ -55,8 +55,8 @@ def main():
     print(f"Time taken: {(tock - tick):0.2f} seconds")
 
     # Run the subproject2 query processor on the uncompressed naive index
-    print("\n-----------------\n\nNow running query processor")
-    query_processor(Path('output/1. naive_index.txt'), subproject=1)
+    print("\n-----------------\n\nRUNNING SUBPROJECT 2 (From Subproject 1)")
+    subproject_2(Path('output/1. naive_index.txt'), subproject=1)
 
 
 def save_to_file(index: dict) -> None:
@@ -67,6 +67,8 @@ def save_to_file(index: dict) -> None:
 
     :param index: The index to save to file
     """
+
+    Path('output/').mkdir(exist_ok=True, parents=True)
 
     with open("output/1. naive_index.txt", "wt") as f:
         json.dump(index, f)
@@ -203,7 +205,3 @@ def clean(text: str) -> str:
     text = sub(r'(?<=[^0-9\s])(?=[0-9])|(?<=[0-9])(?=[^0-9\s])', ' ', text)
 
     return text
-
-
-if __name__ == '__main__':
-    main()

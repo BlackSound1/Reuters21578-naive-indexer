@@ -4,11 +4,11 @@ from pathlib import Path
 
 from nltk.stem import PorterStemmer
 
-from subproject2 import query_processor
+from subproject2 import subproject_2
 from utilities import (calc_postings_size, calc_dict_size, calc_percent_change, render_table)
 
 
-def main():
+def subproject_3():
     """
     Read the index generated from `subproject1.py`, and perform various lossy compressions to it, saving
     to additional output files and recording size data along the way. Display a table at the end. Finally,
@@ -92,8 +92,8 @@ def main():
                  STOPW30_POSTINGS_SIZE)
 
     # Run the subproject2 query processor on the compressed naive index
-    print("\n-----------------\n\nNow running query processor")
-    query_processor(Path('output/5. stemmed_index.txt'), subproject=3)
+    print("\n-----------------\n\nRUNNING SUBPROJECT 2 (From Subproject 3)")
+    subproject_2(Path('output/5. stemmed_index.txt'), subproject=3)
 
 
 def remove_numbers(index: dict) -> dict:
@@ -292,7 +292,3 @@ def create_stopwords(index: dict) -> None:
     print("\nSaving to file: stopwords.txt")
     with open('stopwords.txt', 'wt') as f:
         f.write('\n'.join(token for token in most_common_tokens_150))
-
-
-if __name__ == '__main__':
-    main()
