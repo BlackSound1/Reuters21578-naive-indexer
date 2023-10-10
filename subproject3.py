@@ -1,10 +1,8 @@
 import json
 from collections import defaultdict
-from pathlib import Path
 
 from nltk.stem import PorterStemmer
 
-from subproject2 import subproject_2
 from utilities import (calc_postings_size, calc_dict_size, calc_percent_change, render_table)
 
 

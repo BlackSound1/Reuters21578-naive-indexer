@@ -10,8 +10,6 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from nltk import word_tokenize
 
-from subproject2 import subproject_2
-
 
 def subproject_1():
     """

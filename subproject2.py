@@ -1,11 +1,12 @@
 import json
 import sys
 from pathlib import Path
+from typing import List
 
 from nltk.stem import PorterStemmer
 
 
-def _search_query(query, file: Path) -> list:
+def _search_query(query, file: Path, show_results: bool = True) -> list:
     """
     Search the inverted index for the user-given query.
 
@@ -28,7 +29,8 @@ def _search_query(query, file: Path) -> list:
     # Sort and remove duplicates from postings list
     postings = sorted(set(postings))
 
-    print(f"\nThe list of articles the query \"{query}\" is found in: {postings}")
+    if show_results:
+        print(f"\nThe list of articles the query \"{query}\" is found in: {postings}")
 
     # Return all postings found, if any
     return postings
@@ -54,7 +56,37 @@ def _read_file(file: Path) -> dict:
         sys.exit(f"\nThe required file ({str(file)}), does not exist.")
 
 
-def subproject_2(index: Path, subproject: int = 1) -> None:
+def challenge_query_processor(queries: List[str]) -> None:
+    """
+    Run the query processor on a list of challenge queries.
+
+    For each provided query: normalize it, and try to find it in the uncompressed and compressed indexes.
+    Print results to files in the `query_results/challenge_queries/` directory.
+
+    :param queries: the list of queries to process
+    """
+
+    stemmer = PorterStemmer()
+
+    results_uncompressed = {}
+    results_compressed = {}
+
+    for query in queries:
+        query = stemmer.stem(query.lower())
+
+        results_uncompressed[query] = _search_query(query, Path("output/1. naive_index.txt"), show_results=False)
+        results_compressed[query] = _search_query(query, Path("output/5. stemmed_index.txt"), show_results=False)
+
+    Path('query_results/challenge_queries/').mkdir(exist_ok=True, parents=True)
+
+    with open('query_results/challenge_queries/uncompressed_index.txt', 'wt') as f:
+        json.dump(results_uncompressed, f, indent=4)
+
+    with open('query_results/challenge_queries/compressed_index.txt', 'wt') as f:
+        json.dump(results_compressed, f, indent=4)
+
+
+def sample_query_processor(index: Path, subproject: int = 1) -> None:
     """
     Validate three sample queries.
 

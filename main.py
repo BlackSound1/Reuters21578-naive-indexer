@@ -18,8 +18,12 @@ if __name__ == '__main__':
 
     # Run the subproject 2 query processor on the uncompressed naive index
     print("\n-----------------\n\nRUNNING SUBPROJECT 2 (on uncompressed index)")
-    subproject2.subproject_2(Path('output/1. naive_index.txt'), subproject=1)
+    subproject2.sample_query_processor(Path('output/1. naive_index.txt'), subproject=1)
 
     # Run the subproject 2 query processor on the compressed naive index
     print("\n-----------------\n\nRUNNING SUBPROJECT 2 (on compressed index)")
-    subproject2.subproject_2(Path('output/5. stemmed_index.txt'), subproject=3)
+    subproject2.sample_query_processor(Path('output/5. stemmed_index.txt'), subproject=3)
+
+    # Run the subproject 2 query processor on challenge queries
+    print("\n-----------------\n\nRUNNING SUBPROJECT 2 (on challenge queries)")
+    subproject2.challenge_query_processor(['interesting', 'progress', 'powerful'])
