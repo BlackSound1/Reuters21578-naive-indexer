@@ -97,10 +97,6 @@ def subproject_3():
                  STEM_DICT_SIZE, STEM_POSTINGS_SIZE, STOPW150_DICT_SIZE, STOPW150_POSTINGS_SIZE, STOPW30_DICT_SIZE,
                  STOPW30_POSTINGS_SIZE)
 
-    # Run the subproject2 query processor on the compressed naive index
-    print("\n-----------------\n\nRUNNING SUBPROJECT 2 (From Subproject 3)")
-    subproject_2(Path('output/5. stemmed_index.txt'), subproject=3)
-
 
 def remove_numbers(index: dict) -> dict:
     """

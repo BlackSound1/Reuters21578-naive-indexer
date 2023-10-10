@@ -54,10 +54,6 @@ def subproject_1():
 
     print(f"\nTime taken: {(tock - tick):0.2f} seconds")
 
-    # Run the subproject2 query processor on the uncompressed naive index
-    print("\n-----------------\n\nRUNNING SUBPROJECT 2 (From Subproject 1)")
-    subproject_2(Path('output/1. naive_index.txt'), subproject=1)
-
 
 def save_to_file(index: dict) -> None:
     """

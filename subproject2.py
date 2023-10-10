@@ -5,7 +5,7 @@ from pathlib import Path
 from nltk.stem import PorterStemmer
 
 
-def _search_query(query, file: Path, mode: int) -> list:
+def _search_query(query, file: Path) -> list:
     """
     Search the inverted index for the user-given query.
 
@@ -13,7 +13,6 @@ def _search_query(query, file: Path, mode: int) -> list:
 
     :param query: The query to search the inverted index for
     :param file: The file to read the index of
-    :param mode: Whether this is to be run on the compressed or uncompressed index
     :return: A possible list of docIDs, if any were found
     """
 
@@ -26,8 +25,10 @@ def _search_query(query, file: Path, mode: int) -> list:
         if query in key:
             postings.extend(inverted_index[key])
 
-    print(f"\nThe list of articles the query \"{query}\" is found in: "
-          f"{inverted_index[query] if postings else []}")
+    # Sort and remove duplicates from postings list
+    postings = sorted(set(postings))
+
+    print(f"\nThe list of articles the query \"{query}\" is found in: {postings}")
 
     # Return all postings found, if any
     return postings
@@ -79,15 +80,15 @@ def subproject_2(index: Path, subproject: int = 1) -> None:
 
     # Search the required index for those test queries
     print("\nRunning test queries...")
-    RESULT_1 = _search_query(SAMPLE_QUERY_1, index, subproject)
-    RESULT_2 = _search_query(SAMPLE_QUERY_2, index, subproject)
-    RESULT_3 = _search_query(SAMPLE_QUERY_3, index, subproject)
+    RESULT_1 = _search_query(SAMPLE_QUERY_1, index)
+    RESULT_2 = _search_query(SAMPLE_QUERY_2, index)
+    RESULT_3 = _search_query(SAMPLE_QUERY_3, index)
 
     # Search the required index for those search queries
     print("\nRunning search queries...")
-    RESULT_4 = _search_query(SAMPLE_QUERY_4, index, subproject)
-    RESULT_5 = _search_query(SAMPLE_QUERY_5, index, subproject)
-    RESULT_6 = _search_query(SAMPLE_QUERY_6, index, subproject)
+    RESULT_4 = _search_query(SAMPLE_QUERY_4, index)
+    RESULT_5 = _search_query(SAMPLE_QUERY_5, index)
+    RESULT_6 = _search_query(SAMPLE_QUERY_6, index)
 
     # Create dicts to save to file
     RESULT_DICT_TEST = {SAMPLE_QUERY_1: RESULT_1, SAMPLE_QUERY_2: RESULT_2, SAMPLE_QUERY_3: RESULT_3}
