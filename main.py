@@ -26,4 +26,4 @@ if __name__ == '__main__':
 
     # Run the subproject 2 query processor on challenge queries
     print("\n-----------------\n\nRUNNING SUBPROJECT 2 (on challenge queries)")
-    subproject2.challenge_query_processor(['interesting', 'progress', 'powerful'])
+    subproject2.challenge_query_processor(['pineapple', 'Chrysler', 'Bundesbank'])

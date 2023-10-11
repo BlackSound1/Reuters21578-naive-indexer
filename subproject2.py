@@ -6,7 +6,7 @@ from typing import List
 from nltk.stem import PorterStemmer
 
 
-def _search_query(query, file: Path, show_results: bool = True) -> list:
+def _search_query(query: str, file: Path, subproject: int, show_results: bool = True) -> list:
     """
     Search the inverted index for the user-given query.
 
@@ -14,6 +14,7 @@ def _search_query(query, file: Path, show_results: bool = True) -> list:
 
     :param query: The query to search the inverted index for
     :param file: The file to read the index of
+    :param subproject: Whether this is being run on the uncompressed or compressed index. Changes output text
     :return: A possible list of docIDs, if any were found
     """
 
@@ -30,7 +31,10 @@ def _search_query(query, file: Path, show_results: bool = True) -> list:
     postings = sorted(set(postings))
 
     if show_results:
-        print(f"\nThe list of articles the query \"{query}\" is found in: {postings}")
+        if subproject == 1:
+            print(f"\nFor the uncompressed index, the list of articles the query \"{query}\" is found in: {postings}")
+        elif subproject == 3:
+            print(f"\nFor the compressed index, the list of articles the query \"{query}\" is found in: {postings}")
 
     # Return all postings found, if any
     return postings
@@ -74,8 +78,8 @@ def challenge_query_processor(queries: List[str]) -> None:
     for query in queries:
         query = stemmer.stem(query.lower())
 
-        results_uncompressed[query] = _search_query(query, Path("output/1. naive_index.txt"), show_results=False)
-        results_compressed[query] = _search_query(query, Path("output/5. stemmed_index.txt"), show_results=False)
+        results_uncompressed[query] = _search_query(query, Path("output/1. naive_index.txt"), 1)
+        results_compressed[query] = _search_query(query, Path("output/5. stemmed_index.txt"), 3)
 
     Path('query_results/challenge_queries/').mkdir(exist_ok=True, parents=True)
 
@@ -112,15 +116,15 @@ def sample_query_processor(index: Path, subproject: int = 1) -> None:
 
     # Search the required index for those test queries
     print("\nRunning test queries...")
-    RESULT_1 = _search_query(SAMPLE_QUERY_1, index)
-    RESULT_2 = _search_query(SAMPLE_QUERY_2, index)
-    RESULT_3 = _search_query(SAMPLE_QUERY_3, index)
+    RESULT_1 = _search_query(SAMPLE_QUERY_1, index, subproject)
+    RESULT_2 = _search_query(SAMPLE_QUERY_2, index, subproject)
+    RESULT_3 = _search_query(SAMPLE_QUERY_3, index, subproject)
 
     # Search the required index for those search queries
     print("\nRunning search queries...")
-    RESULT_4 = _search_query(SAMPLE_QUERY_4, index)
-    RESULT_5 = _search_query(SAMPLE_QUERY_5, index)
-    RESULT_6 = _search_query(SAMPLE_QUERY_6, index)
+    RESULT_4 = _search_query(SAMPLE_QUERY_4, index, subproject)
+    RESULT_5 = _search_query(SAMPLE_QUERY_5, index, subproject)
+    RESULT_6 = _search_query(SAMPLE_QUERY_6, index, subproject)
 
     # Create dicts to save to file
     RESULT_DICT_TEST = {SAMPLE_QUERY_1: RESULT_1, SAMPLE_QUERY_2: RESULT_2, SAMPLE_QUERY_3: RESULT_3}
